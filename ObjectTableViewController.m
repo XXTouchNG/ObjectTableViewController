@@ -25,16 +25,46 @@
     return NSLocalizedString(@"Object Viewer", @"");
 }
 
++ (id)objectWithContentsOfPath:(NSString *)path {
+    NSError *readError = nil;
+    NSData *data = [NSData dataWithContentsOfFile:path options:kNilOptions error:&readError];
+    if (!data) return nil;
+    id object = nil;
+    object = [NSPropertyListSerialization propertyListWithData:data options:kNilOptions format:nil error:&readError];
+    if (object) return object;
+    object = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&readError];
+    if (object) return object;
+    return nil;
+}
+
+- (instancetype)initWithPath:(NSString *)path {
+    if (self = [super init]) {
+        _indentationWidth = 14.0;
+        _entryPath = path;
+        [self setupWithPath];
+    }
+    return self;
+}
+
 - (instancetype)initWithObject:(id)object {
     if (self = [super init]) {
         _indentationWidth = 14.0;
         _object = object;
-        _rootNode = [[ObjectNode alloc] initWithPropertyList:object];
-        [_rootNode _sortUsingDescriptors:@[
-             [NSSortDescriptor sortDescriptorWithKey:@"key" ascending:YES],
-        ]];
+        [self setupWithObject];
     }
     return self;
+}
+
+- (void)setupWithPath {
+    _object = [ObjectTableViewController objectWithContentsOfPath:_entryPath];
+    [self setupWithObject];
+}
+
+- (void)setupWithObject {
+    _rootNode = [[ObjectNode alloc] initWithPropertyList:_object];
+    [_rootNode _sortUsingDescriptors:@[
+         [NSSortDescriptor sortDescriptorWithKey:@"key" ascending:YES],
+    ]];
 }
 
 - (void)viewDidLoad {
@@ -50,6 +80,14 @@
         searchController;
     });
 
+    if (self.pullToReload && self.entryPath) {
+        self.refreshControl = ({
+            UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+            [refreshControl addTarget:self action:@selector(reloadDataFromEntry:) forControlEvents:UIControlEventValueChanged];
+            refreshControl;
+        });
+    }
+
     if (self.allowSearch) {
         self.navigationItem.hidesSearchBarWhenScrolling = YES;
         self.navigationItem.searchController = self.searchController;
@@ -58,8 +96,22 @@
     [self.tableView registerClass:[ObjectCell class] forCellReuseIdentifier:@"ObjectCell"];
 }
 
-#pragma mark - Table view data source
+- (void)reloadDataFromEntry:(UIRefreshControl *)sender {
+    if (self.searchController.isActive) {
+        return;
+    }
+    [self loadDataFromEntry];
+    if ([sender isRefreshing]) {
+        [sender endRefreshing];
+    }
+}
 
+- (void)loadDataFromEntry {
+    [self setupWithPath];
+    [self.tableView reloadData];
+}
+
+#pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
