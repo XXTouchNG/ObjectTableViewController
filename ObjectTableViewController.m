@@ -65,10 +65,22 @@
     [_rootNode _sortUsingDescriptors:@[
          [NSSortDescriptor sortDescriptorWithKey:@"key" ascending:YES],
     ]];
+    if (self.initialRootExpanded) {
+        [_rootNode setExpanded:YES recursively:NO];
+    }
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    if (self.title.length == 0) {
+        if (self.entryPath) {
+            NSString *entryName = [self.entryPath lastPathComponent];
+            self.title = entryName;
+        } else {
+            self.title = [[self class] viewerName];
+        }
+    }
 
     self.view.backgroundColor = [UIColor systemBackgroundColor];
 
@@ -94,6 +106,10 @@
     }
 
     [self.tableView registerClass:[ObjectCell class] forCellReuseIdentifier:@"ObjectCell"];
+
+    if (self.initialRootExpanded) {
+        [self.rootNode setExpanded:YES recursively:NO];
+    }
 }
 
 - (void)reloadDataFromEntry:(UIRefreshControl *)sender {
@@ -271,7 +287,16 @@
             NSString *searchContent = self.searchController.searchBar.text;
             NSRange searchRange = [strKey rangeOfString:searchContent options:NSCaseInsensitiveSearch | NSDiacriticInsensitiveSearch range:NSMakeRange(0, strKey.length)];
             if (searchRange.location != NSNotFound) {
-                [attrKey addAttributes:@{ NSBackgroundColorAttributeName: [UIColor colorWithRed:253.0/255.0 green:247.0/255.0 blue:148.0/255.0 alpha:1.0] } range:searchRange];
+                [attrKey addAttributes:@{
+                     NSForegroundColorAttributeName: [UIColor colorWithDynamicProvider:^UIColor *_Nonnull (UITraitCollection *_Nonnull traitCollection) {
+                                                          if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                                                              return [UIColor systemBackgroundColor];
+                                                          } else {
+                                                              return [UIColor labelColor];
+                                                          }
+                                                      }],
+                     NSBackgroundColorAttributeName: [UIColor colorWithRed:253.0/255.0 green:247.0/255.0 blue:148.0/255.0 alpha:1.0],
+                 } range:searchRange];
             }
         }
         [cell.textLabel setAttributedText:attrKey];
@@ -295,7 +320,16 @@
             NSString *searchContent = self.searchController.searchBar.text;
             NSRange searchRange = [strVal rangeOfString:searchContent options:NSCaseInsensitiveSearch | NSDiacriticInsensitiveSearch range:NSMakeRange(0, strVal.length)];
             if (searchRange.location != NSNotFound) {
-                [attrValue addAttributes:@{ NSBackgroundColorAttributeName: [UIColor colorWithRed:253.0/255.0 green:247.0/255.0 blue:148.0/255.0 alpha:1.0] } range:searchRange];
+                [attrValue addAttributes:@{
+                     NSForegroundColorAttributeName: [UIColor colorWithDynamicProvider:^UIColor *_Nonnull (UITraitCollection *_Nonnull traitCollection) {
+                                                          if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                                                              return [UIColor systemBackgroundColor];
+                                                          } else {
+                                                              return [UIColor labelColor];
+                                                          }
+                                                      }],
+                     NSBackgroundColorAttributeName: [UIColor colorWithRed:253.0/255.0 green:247.0/255.0 blue:148.0/255.0 alpha:1.0],
+                 } range:searchRange];
             }
         }
         [cell.detailTextLabel setAttributedText:attrValue];
