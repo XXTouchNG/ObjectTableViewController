@@ -5,9 +5,12 @@ A simple property list viewer in Objective-C.
 ## Usage
 
 ```objective-c
-ObjectTableViewController *objCtrl = [[ObjectTableViewController alloc] initWithObject:aPropertyListObject];
-objCtrl.pressToCopy = YES;
-objCtrl.showTypeHint = YES;
-objCtrl.allowSearch = YES;
-[aNavigationController pushViewController:objCtrl animated:YES];
+ObjectTableViewController *ctrl = [[ObjectTableViewController alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"Info" ofType:@"plist"]];
+ctrl.pullToReload = YES;
+ctrl.pressToCopy = YES;
+ctrl.showTypeHint = YES;
+ctrl.allowSearch = YES;
+ctrl.initialRootExpanded = YES;
+UINavigationController *navCtrl = [[UINavigationController alloc] initWithRootViewController:ctrl];
+[self presentViewController:navCtrl animated:YES completion:nil];
 ```
