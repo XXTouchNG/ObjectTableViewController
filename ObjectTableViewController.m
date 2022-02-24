@@ -22,7 +22,7 @@
 @implementation ObjectTableViewController
 
 + (NSString *)viewerName {
-    return NSLocalizedString(@"Object Viewer", @"");
+    return NSLocalizedString(@"Object Viewer", @"ObjectTableViewController");
 }
 
 + (id)objectWithContentsOfPath:(NSString *)path {
@@ -155,34 +155,34 @@
             NSString *strValue = [NSString stringWithFormat:@"%@", [ObjectNode stringValueOfNode:cellNode]];
             if (cellNode != rootNode && !cellNode.isNodeOfArray) {
                 NSString *strKey = [NSString stringWithFormat:@"%@", [ObjectNode stringKeyOfNode:cellNode]];
-                [cellActions addObject:[UIAction actionWithTitle:NSLocalizedString(@"Copy Key", @"") image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction *_Nonnull action) {
+                [cellActions addObject:[UIAction actionWithTitle:NSLocalizedString(@"Copy Key", @"ObjectTableViewController") image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction *_Nonnull action) {
                                             [[UIPasteboard generalPasteboard] setString:strKey];
                                         }]];
             }
-            [cellActions addObject:[UIAction actionWithTitle:NSLocalizedString(@"Copy Value", @"") image:[UIImage systemImageNamed:@"doc.on.doc.fill"] identifier:nil handler:^(__kindof UIAction *_Nonnull action) {
+            [cellActions addObject:[UIAction actionWithTitle:NSLocalizedString(@"Copy Value", @"ObjectTableViewController") image:[UIImage systemImageNamed:@"doc.on.doc.fill"] identifier:nil handler:^(__kindof UIAction *_Nonnull action) {
                                         [[UIPasteboard generalPasteboard] setString:strValue];
                                     }]];
         } else {
             if (cellNode != rootNode) {
                 NSString *strKey = [NSString stringWithFormat:@"%@", [ObjectNode stringKeyOfNode:cellNode]];
-                [cellActions addObject:[UIAction actionWithTitle:NSLocalizedString(@"Copy Key", @"") image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction *_Nonnull action) {
+                [cellActions addObject:[UIAction actionWithTitle:NSLocalizedString(@"Copy Key", @"ObjectTableViewController") image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:^(__kindof UIAction *_Nonnull action) {
                                             [[UIPasteboard generalPasteboard] setString:strKey];
                                         }]];
             }
             if (!self.searchController.isActive) {
                 if (cellNode.isExpanded) {
-                    [cellActions addObject:[UIAction actionWithTitle:NSLocalizedString(@"Collapse Recursively", @"") image:[UIImage systemImageNamed:@"arrow.down.right.and.arrow.up.left"] identifier:nil handler:^(__kindof UIAction *_Nonnull action) {
+                    [cellActions addObject:[UIAction actionWithTitle:NSLocalizedString(@"Collapse Recursively", @"ObjectTableViewController") image:[UIImage systemImageNamed:@"arrow.down.right.and.arrow.up.left"] identifier:nil handler:^(__kindof UIAction *_Nonnull action) {
                                                 [self tableView:tableView triggerNodeAtIndexPath:indexPath recursively:YES];
                                             }]];
                 } else {
-                    [cellActions addObject:[UIAction actionWithTitle:NSLocalizedString(@"Expand Recursively", @"") image:[UIImage systemImageNamed:@"arrow.up.left.and.arrow.down.right"] identifier:nil handler:^(__kindof UIAction *_Nonnull action) {
+                    [cellActions addObject:[UIAction actionWithTitle:NSLocalizedString(@"Expand Recursively", @"ObjectTableViewController") image:[UIImage systemImageNamed:@"arrow.up.left.and.arrow.down.right"] identifier:nil handler:^(__kindof UIAction *_Nonnull action) {
                                                 [self tableView:tableView triggerNodeAtIndexPath:indexPath recursively:YES];
                                             }]];
                 }
             }
         }
         if (self.searchController.isActive) {
-            [cellActions addObject:[UIAction actionWithTitle:NSLocalizedString(@"Focus", @"") image:[UIImage systemImageNamed:@"scope"] identifier:nil handler:^(__kindof UIAction *_Nonnull action) {
+            [cellActions addObject:[UIAction actionWithTitle:NSLocalizedString(@"Focus", @"ObjectTableViewController") image:[UIImage systemImageNamed:@"scope"] identifier:nil handler:^(__kindof UIAction *_Nonnull action) {
                                         ObjectNode *targetNode = [self.rootNode descendantNodeForVisibleKey:cellNode.visibleKey];
                                         if (targetNode) {
                                             [self.rootNode expandToDescendantNode:targetNode];
@@ -199,7 +199,7 @@
                                     }]];
         }
         return [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:^UIMenu *_Nullable (NSArray<UIMenuElement *> *_Nonnull suggestedActions) {
-                    UIMenu *menu = [UIMenu menuWithTitle:(self.showTypeHint ? [NSString stringWithFormat:NSLocalizedString(@"<%@: %p>", @""), NSStringFromClass([cellNode.propertyList class]), cellNode.propertyList] : @"") children:cellActions];
+                    UIMenu *menu = [UIMenu menuWithTitle:(self.showTypeHint ? [NSString stringWithFormat:NSLocalizedString(@"<%@: %p>", @"ObjectTableViewController"), NSStringFromClass([cellNode.propertyList class]), cellNode.propertyList] : @"") children:cellActions];
                     return menu;
                 }];
     }
@@ -260,7 +260,7 @@
     NSString *cellKey;
     BOOL isRootNode;
     if (cellNode == rootNode) {
-        cellKey = NSLocalizedString(@"Root", @"");
+        cellKey = NSLocalizedString(@"Root", @"ObjectTableViewController");
         isRootNode = YES;
     } else {
         cellKey = [ObjectNode stringKeyOfNode:cellNode];
